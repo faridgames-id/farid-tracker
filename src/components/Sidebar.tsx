@@ -19,9 +19,13 @@ import {
   UserPlus,
   Pencil,
   Check,
+  Download,
+  Upload,
+  CloudUpload,
+  RefreshCw,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { getProfile, saveProfile, getLevelInfo, LEVELS, loadFromSupabase } from '@/lib/store';
+import { useState, useEffect, useRef } from 'react';
+import { getProfile, saveProfile, getLevelInfo, LEVELS, loadFromSupabase, exportData, importData, syncToSupabase } from '@/lib/store';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 
@@ -79,6 +83,51 @@ export default function Sidebar() {
   };
 
   const levelInfo = getLevelInfo(profile.xp);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  const handleExportData = () => {
+    const data = exportData();
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `farid_tracker_backup_${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setIsProfileDropdownOpen(false);
+  };
+
+  const handleImportData = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      if (content && importData(content)) {
+        window.location.reload();
+      } else {
+        alert("Failed to import data. Invalid file format.");
+      }
+    };
+    reader.readAsText(file);
+    setIsProfileDropdownOpen(false);
+  };
+
+  const handleSaveToCloud = async () => {
+    setIsSyncing(true);
+    await syncToSupabase();
+    setIsSyncing(false);
+    setIsProfileDropdownOpen(false);
+    alert("Data successfully saved to cloud!");
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -248,6 +297,37 @@ export default function Sidebar() {
                   <UserPlus size={16} />
                   Switch Account
                 </button>
+                <div className="h-px bg-white/5 my-1" />
+                <button
+                  onClick={handleSaveToCloud}
+                  disabled={isSyncing}
+                  className="flex items-center gap-3 w-full p-2.5 rounded-xl text-sm font-medium text-text-secondary hover:text-white hover:bg-primary/20 hover:text-primary transition-colors disabled:opacity-50"
+                >
+                  {isSyncing ? <RefreshCw size={16} className="animate-spin" /> : <CloudUpload size={16} />}
+                  {isSyncing ? 'Saving...' : 'Save to Cloud'}
+                </button>
+                <button
+                  onClick={handleExportData}
+                  className="flex items-center gap-3 w-full p-2.5 rounded-xl text-sm font-medium text-text-secondary hover:text-white hover:bg-white/10 transition-colors"
+                >
+                  <Download size={16} />
+                  Export Data
+                </button>
+                <button
+                  onClick={handleImportData}
+                  className="flex items-center gap-3 w-full p-2.5 rounded-xl text-sm font-medium text-text-secondary hover:text-white hover:bg-white/10 transition-colors"
+                >
+                  <Upload size={16} />
+                  Import Data
+                </button>
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  className="hidden" 
+                  accept=".json" 
+                  onChange={handleFileChange} 
+                />
+                <div className="h-px bg-white/5 my-1" />
                 <button
                   onClick={handleLogout}
                   className="flex items-center gap-3 w-full p-2.5 rounded-xl text-sm font-medium text-danger hover:bg-danger/10 transition-colors"

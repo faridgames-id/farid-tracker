@@ -84,7 +84,7 @@ function get<T>(key: string, fallback: T): T {
 
 let saveTimeout: ReturnType<typeof setTimeout> | null = null;
 
-async function syncToSupabase() {
+export async function syncToSupabase() {
   if (!isBrowser) return;
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) return;
@@ -142,6 +142,35 @@ function set<T>(key: string, value: T): void {
   
   if (saveTimeout) clearTimeout(saveTimeout);
   saveTimeout = setTimeout(syncToSupabase, 2000);
+}
+
+export function exportData(): string {
+  const allData: Record<string, any> = {};
+  for (const key of Object.values(KEYS)) {
+    const raw = localStorage.getItem(key);
+    if (raw) {
+      try {
+        allData[key] = JSON.parse(raw);
+      } catch (e) {}
+    }
+  }
+  return JSON.stringify(allData, null, 2);
+}
+
+export function importData(jsonData: string): boolean {
+  try {
+    const data = JSON.parse(jsonData);
+    for (const key of Object.values(KEYS)) {
+      if (data[key] !== undefined) {
+        localStorage.setItem(key, JSON.stringify(data[key]));
+      }
+    }
+    syncToSupabase();
+    return true;
+  } catch (e) {
+    console.error("Failed to import data", e);
+    return false;
+  }
 }
 
 // LEVELS
