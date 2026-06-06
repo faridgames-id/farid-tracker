@@ -64,7 +64,7 @@ export interface UserProfile {
   title?: string;
 }
 
-const KEYS = {
+export const KEYS = {
   HABITS: 'farid_habits',
   TRANSACTIONS: 'farid_transactions',
   SAVINGS: 'farid_savings',
