@@ -51,9 +51,7 @@ export default function LoginPage() {
         <div className="absolute bottom-0 left-0 w-32 h-32 bg-gold/20 blur-[80px] rounded-full" />
         
         <div className="relative z-10">
-          <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center text-3xl shadow-lg shadow-primary/30 mx-auto mb-6">
-            🚀
-          </div>
+          <img src="/logo.png" alt="Farid Entrepreneur Logo" className="w-20 h-20 rounded-3xl shadow-lg shadow-primary/30 mx-auto mb-6 object-cover" />
           
           <h1 className="text-3xl font-bold text-white mb-2">Farid Entrepreneur</h1>
           <p className="text-sm text-text-secondary mb-8">

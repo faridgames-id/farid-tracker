@@ -86,7 +86,7 @@ export default function Sidebar() {
       {/* Mobile Top Bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 glass px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-2xl">🚀</span>
+          <img src="/logo.png" alt="Logo" className="w-8 h-8 rounded-lg shadow-md object-cover" />
           <span className="font-bold text-lg text-gradient">Farid</span>
         </div>
         <button
@@ -117,9 +117,7 @@ export default function Sidebar() {
         {/* Logo */}
         <div className="px-6 mb-8">
           <div className="flex items-center gap-3 mb-1">
-            <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center text-xl shadow-lg">
-              🚀
-            </div>
+            <img src="/logo.png" alt="Farid Entrepreneur Logo" className="w-10 h-10 rounded-xl shadow-lg object-cover" />
             <div>
               <h1 className="font-bold text-lg text-white leading-tight">Farid</h1>
               <p className="text-[10px] text-text-secondary tracking-wider uppercase">Entrepreneur</p>
