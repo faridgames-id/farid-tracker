@@ -23,13 +23,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
       </head>
-      <body className="gradient-bg min-h-screen font-sans antialiased bg-[#030816]">
-        {/* Animated Background */}
+      <body className="gradient-bg min-h-screen font-sans antialiased bg-[#061021]">
+        {/* Animated Background using User's Blue Palette */}
         <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
-          <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-[#9333EA]/20 blur-[100px] animate-blob mix-blend-screen" />
-          <div className="absolute top-[20%] right-[-10%] w-[45vw] h-[45vw] rounded-full bg-[#38BDF8]/20 blur-[100px] animate-blob animation-delay-2000 mix-blend-screen" />
-          <div className="absolute bottom-[-20%] left-[10%] w-[60vw] h-[60vw] rounded-full bg-[#1E3A8A]/30 blur-[120px] animate-blob animation-delay-4000 mix-blend-screen" />
-          <div className="absolute bottom-[10%] right-[20%] w-[40vw] h-[40vw] rounded-full bg-[#C026D3]/15 blur-[100px] animate-blob mix-blend-screen" />
+          <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-[#385B94]/25 blur-[100px] animate-blob mix-blend-screen" />
+          <div className="absolute top-[20%] right-[-10%] w-[45vw] h-[45vw] rounded-full bg-[#5889DB]/20 blur-[100px] animate-blob animation-delay-2000 mix-blend-screen" />
+          <div className="absolute bottom-[-20%] left-[10%] w-[60vw] h-[60vw] rounded-full bg-[#2B4776]/30 blur-[120px] animate-blob animation-delay-4000 mix-blend-screen" />
+          <div className="absolute bottom-[10%] right-[20%] w-[40vw] h-[40vw] rounded-full bg-[#4871B6]/20 blur-[100px] animate-blob mix-blend-screen" />
         </div>
 
         <Sidebar />
