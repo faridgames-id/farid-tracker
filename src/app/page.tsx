@@ -15,7 +15,7 @@ import {
   formatCurrency,
   LEVELS,
 } from '@/lib/store';
-import { Flame, TrendingUp, BookOpen, Dumbbell, Trophy, Target, Zap, Star } from 'lucide-react';
+import { Flame, TrendingUp, TrendingDown, BookOpen, Dumbbell, Trophy, Target, Zap, Star, DollarSign } from 'lucide-react';
 
 export default function DashboardPage() {
   const [mounted, setMounted] = useState(false);
@@ -24,6 +24,7 @@ export default function DashboardPage() {
     xp: 0,
     habitsPercent: 0,
     monthlyIncome: 0,
+    monthlyExpense: 0,
     learningCount: 0,
     gymDays: 0,
     name: 'Farid',
@@ -45,6 +46,10 @@ export default function DashboardPage() {
       .filter(t => t.type === 'income' && t.date.startsWith(monthKey))
       .reduce((sum, t) => sum + t.amount, 0);
 
+    const monthlyExpense = transactions
+      .filter(t => t.type === 'expense' && t.date.startsWith(monthKey))
+      .reduce((sum, t) => sum + t.amount, 0);
+
     const learning = getLearningEntries();
     const workouts = getWorkoutsForWeek(getWeekKey());
     const gymDays = workouts.filter(w => w.completed).length;
@@ -54,6 +59,7 @@ export default function DashboardPage() {
       xp: profile.xp,
       habitsPercent: percent,
       monthlyIncome: monthlyIncome,
+      monthlyExpense: monthlyExpense,
       learningCount: learning.length,
       gymDays,
       name: profile.name || 'Farid',
@@ -120,28 +126,62 @@ export default function DashboardPage() {
 
       {/* Progress + Achievements */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Daily Progress Ring */}
-        <FadeIn delay={0.3}>
-          <div className="glass rounded-2xl p-6">
-            <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
-              <Target size={20} className="text-primary" />
-              Daily Progress
-            </h2>
-            <div className="flex items-center justify-center gap-8">
-              <ProgressRing progress={stats.habitsPercent} size={140} color="#2563EB">
-                <div className="text-center">
-                  <span className="text-3xl font-bold">{stats.habitsPercent}%</span>
-                  <p className="text-[10px] text-text-muted mt-0.5">Complete</p>
+        <div className="space-y-6">
+          {/* Daily Progress Ring */}
+          <FadeIn delay={0.3}>
+            <div className="glass rounded-2xl p-6">
+              <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
+                <Target size={20} className="text-primary" />
+                Daily Progress
+              </h2>
+              <div className="flex items-center justify-center gap-8">
+                <ProgressRing progress={stats.habitsPercent} size={140} color="#2563EB">
+                  <div className="text-center">
+                    <span className="text-3xl font-bold">{stats.habitsPercent}%</span>
+                    <p className="text-[10px] text-text-muted mt-0.5">Complete</p>
+                  </div>
+                </ProgressRing>
+                <div className="space-y-3">
+                  <ProgressItem label="Morning" progress={60} color="#f59e0b" />
+                  <ProgressItem label="Afternoon" progress={40} color="#3b82f6" />
+                  <ProgressItem label="Night" progress={20} color="#8b5cf6" />
                 </div>
-              </ProgressRing>
-              <div className="space-y-3">
-                <ProgressItem label="Morning" progress={60} color="#f59e0b" />
-                <ProgressItem label="Afternoon" progress={40} color="#3b82f6" />
-                <ProgressItem label="Night" progress={20} color="#8b5cf6" />
               </div>
             </div>
-          </div>
-        </FadeIn>
+          </FadeIn>
+
+          {/* Monthly Finance Stats */}
+          <FadeIn delay={0.35}>
+            <div className="glass rounded-2xl p-6">
+              <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
+                <DollarSign size={20} className="text-success" />
+                Monthly Finance
+              </h2>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/10 border-l-4 border-l-success">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp size={16} className="text-success" />
+                    <span className="text-sm font-medium">Income</span>
+                  </div>
+                  <span className="font-bold text-success">{formatCurrency(stats.monthlyIncome)}</span>
+                </div>
+                <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/10 border-l-4 border-l-danger">
+                  <div className="flex items-center gap-2">
+                    <TrendingDown size={16} className="text-danger" />
+                    <span className="text-sm font-medium">Expense</span>
+                  </div>
+                  <span className="font-bold text-danger">{formatCurrency(stats.monthlyExpense)}</span>
+                </div>
+                <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/10 border-l-4 border-l-primary mt-4">
+                  <span className="text-sm font-bold text-white">Net Balance</span>
+                  <span className={`font-bold ${stats.monthlyIncome - stats.monthlyExpense >= 0 ? 'text-primary' : 'text-danger'}`}>
+                    {formatCurrency(stats.monthlyIncome - stats.monthlyExpense)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        </div>
 
         {/* Achievements / Level Roadmap */}
         <FadeIn delay={0.4}>
