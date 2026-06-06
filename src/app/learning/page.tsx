@@ -185,7 +185,7 @@ export default function LearningPage() {
                         </span>
                       </div>
                     </div>
-                    <div className="opacity-0 group-hover:opacity-100 transition-all flex items-center">
+                    <div className="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all flex items-center">
                       <button
                         onClick={() => handleEdit(entry)}
                         className="text-text-muted hover:text-white transition-colors p-1"

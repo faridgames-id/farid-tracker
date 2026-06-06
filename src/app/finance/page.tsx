@@ -175,7 +175,7 @@ export default function FinancePage() {
                   <p className={`text-sm font-bold ${t.type === 'income' ? 'text-success' : 'text-danger'}`}>
                     {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
                   </p>
-                  <div className="opacity-0 group-hover:opacity-100 transition-all flex items-center">
+                  <div className="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all flex items-center">
                     <button
                       onClick={() => handleEdit(t)}
                       className="text-text-muted hover:text-white transition-colors p-1"
@@ -218,7 +218,7 @@ export default function FinancePage() {
                   <p className={`text-xs font-bold ${t.type === 'income' ? 'text-success' : 'text-danger'} mr-2`}>
                     {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
                   </p>
-                  <div className="flex items-center opacity-0 group-hover:opacity-100 transition-all">
+                  <div className="flex items-center opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all">
                     <button onClick={() => handleEdit(t)} className="text-text-muted hover:text-white p-1">
                       <Edit2 size={12} />
                     </button>

@@ -247,7 +247,7 @@ export default function Sidebar() {
                   </div>
                   <button 
                     onClick={() => setIsEditingName(true)}
-                    className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-text-muted hover:text-white hover:bg-white/10 transition-all ml-auto"
+                    className="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 p-1.5 rounded-lg text-text-muted hover:text-white hover:bg-white/10 transition-all ml-auto"
                     title="Edit Name"
                   >
                     <Pencil size={14} />
