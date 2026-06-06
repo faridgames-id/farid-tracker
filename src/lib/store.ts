@@ -101,11 +101,17 @@ export async function syncToSupabase() {
     }
   }
 
-  await supabase.from('user_data').upsert({
+  const { error } = await supabase.from('user_data').upsert({
     user_id: session.user.id,
     data: allData,
     updated_at: new Date().toISOString()
   });
+
+  if (error) {
+    console.error("Supabase sync error:", error);
+    return { success: false, error };
+  }
+  return { success: true };
 }
 
 export async function loadFromSupabase() {

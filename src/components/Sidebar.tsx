@@ -123,10 +123,15 @@ export default function Sidebar() {
 
   const handleSaveToCloud = async () => {
     setIsSyncing(true);
-    await syncToSupabase();
+    const result = await syncToSupabase();
     setIsSyncing(false);
     setIsProfileDropdownOpen(false);
-    alert("Data successfully saved to cloud!");
+    
+    if (result?.error) {
+      alert("Failed to save to cloud! Database table might be missing. Error: " + result.error.message);
+    } else {
+      alert("Data successfully saved to cloud!");
+    }
   };
 
   const handleLogout = async () => {
