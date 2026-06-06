@@ -149,23 +149,31 @@ export default function Sidebar() {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    localStorage.clear(); // Clear local data on logout for safety
-    router.push('/login');
+    try {
+      await supabase.auth.signOut();
+      localStorage.clear(); // Clear local data on logout for safety
+      window.location.href = '/login';
+    } catch (e: any) {
+      alert("Logout error: " + e.message);
+    }
   };
 
   const handleSwitchAccount = async () => {
-    await supabase.auth.signOut();
-    localStorage.clear();
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin,
-        queryParams: {
-          prompt: 'select_account',
+    try {
+      await supabase.auth.signOut();
+      localStorage.clear();
+      await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin,
+          queryParams: {
+            prompt: 'select_account',
+          },
         },
-      },
-    });
+      });
+    } catch (e: any) {
+      alert("Switch account error: " + e.message);
+    }
   };
 
   if (pathname === '/login') return null;
