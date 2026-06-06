@@ -15,19 +15,25 @@ import {
   HabitItem,
   HabitDay,
 } from '@/lib/store';
-import { CheckCircle2, Circle, Sun, CloudSun, Moon, Flame, Award, Edit2, Trash2, Plus } from 'lucide-react';
+import { CheckCircle2, Circle, Sun, CloudSun, Moon, Flame, Award, Edit2, Trash2, Plus, ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export default function HabitsPage() {
-  const [today] = useState(getToday());
+  const [selectedDate, setSelectedDate] = useState(getToday());
   const [habits, setHabits] = useState<HabitDay | null>(null);
   const [mounted, setMounted] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    setHabits(getHabitsForDate(today));
-  }, [today]);
+    setHabits(getHabitsForDate(selectedDate));
+  }, [selectedDate]);
+
+  const changeDate = (offset: number) => {
+    const d = new Date(selectedDate + 'T12:00:00Z');
+    d.setDate(d.getDate() + offset);
+    setSelectedDate(d.toISOString().slice(0, 10));
+  };
 
   const toggleHabit = useCallback((section: 'morning' | 'afternoon' | 'night', id: string) => {
     if (!habits || isEditing) return; // Disable toggle in edit mode
@@ -143,12 +149,30 @@ export default function HabitsPage() {
       <FadeIn>
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
+            <h1 className="text-2xl font-bold flex items-center gap-2 mb-2">
               <CheckCircle2 className="text-primary" size={28} />
               Daily Habits
             </h1>
-            <p className="text-text-muted text-sm mt-1">
-              {new Date(today).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+            <div className="flex items-center gap-1 bg-white/5 rounded-lg p-1 w-fit border border-white/10">
+              <button onClick={() => changeDate(-1)} className="p-1.5 hover:bg-white/10 rounded-md text-text-muted hover:text-white transition-colors">
+                <ChevronLeft size={16} />
+              </button>
+              <div className="relative flex items-center group px-2">
+                <Calendar size={14} className="text-primary absolute left-2 pointer-events-none" />
+                <input 
+                  type="date" 
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="bg-transparent text-sm font-medium outline-none cursor-pointer hover:text-primary transition-colors text-white pl-6"
+                  style={{ colorScheme: 'dark' }}
+                />
+              </div>
+              <button onClick={() => changeDate(1)} className="p-1.5 hover:bg-white/10 rounded-md text-text-muted hover:text-white transition-colors">
+                <ChevronRight size={16} />
+              </button>
+            </div>
+            <p className="text-text-muted text-xs mt-2 pl-1">
+              {new Date(selectedDate + 'T12:00:00Z').toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
             </p>
           </div>
 
