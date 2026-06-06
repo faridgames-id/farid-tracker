@@ -125,8 +125,12 @@ export async function loadFromSupabase() {
   let updated = false;
   for (const key of Object.values(KEYS)) {
     if (userData[key] !== undefined) {
-      localStorage.setItem(key, JSON.stringify(userData[key]));
-      updated = true;
+      const currentRaw = localStorage.getItem(key);
+      const newRaw = JSON.stringify(userData[key]);
+      if (currentRaw !== newRaw) {
+        localStorage.setItem(key, newRaw);
+        updated = true;
+      }
     }
   }
   return updated;

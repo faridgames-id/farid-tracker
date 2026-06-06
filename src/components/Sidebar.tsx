@@ -21,7 +21,7 @@ import {
   Check,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { getProfile, saveProfile, getLevelInfo, LEVELS } from '@/lib/store';
+import { getProfile, saveProfile, getLevelInfo, LEVELS, loadFromSupabase } from '@/lib/store';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 
@@ -61,6 +61,11 @@ export default function Sidebar() {
           router.push('/login');
         } else {
           setUser(session.user);
+          loadFromSupabase().then(updated => {
+            if (updated) {
+              window.location.reload();
+            }
+          });
         }
       });
     }
