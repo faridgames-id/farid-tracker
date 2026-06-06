@@ -22,6 +22,7 @@ import {
   Download,
   Upload,
   CloudUpload,
+  CloudDownload,
   RefreshCw,
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
@@ -131,6 +132,19 @@ export default function Sidebar() {
       alert("Failed to save to cloud! Database table might be missing. Error: " + result.error.message);
     } else {
       alert("Data successfully saved to cloud!");
+    }
+  };
+
+  const handleLoadFromCloud = async () => {
+    setIsSyncing(true);
+    const success = await loadFromSupabase();
+    setIsSyncing(false);
+    setIsProfileDropdownOpen(false);
+    if (success) {
+      alert("Data successfully loaded from cloud!");
+      window.location.reload();
+    } else {
+      alert("No new data found on cloud, or failed to connect to database.");
     }
   };
 
@@ -310,6 +324,14 @@ export default function Sidebar() {
                 >
                   {isSyncing ? <RefreshCw size={16} className="animate-spin" /> : <CloudUpload size={16} />}
                   {isSyncing ? 'Saving...' : 'Save to Cloud'}
+                </button>
+                <button
+                  onClick={handleLoadFromCloud}
+                  disabled={isSyncing}
+                  className="flex items-center gap-3 w-full p-2.5 rounded-xl text-sm font-medium text-text-secondary hover:text-white hover:bg-primary/20 hover:text-primary transition-colors disabled:opacity-50"
+                >
+                  {isSyncing ? <RefreshCw size={16} className="animate-spin" /> : <CloudDownload size={16} />}
+                  {isSyncing ? 'Loading...' : 'Load from Cloud'}
                 </button>
                 <button
                   onClick={handleExportData}
