@@ -60,6 +60,8 @@ export interface UserProfile {
   streak: number;
   lastActiveDate: string;
   badges: string[];
+  name?: string;
+  title?: string;
 }
 
 const KEYS = {
@@ -167,6 +169,7 @@ export function getLevelInfo(xp: number) {
 export function getProfile(): UserProfile {
   return get<UserProfile>(KEYS.PROFILE, {
     xp: 0, level: 1, streak: 0, lastActiveDate: '', badges: [],
+    name: 'Farid', title: 'Entrepreneur'
   });
 }
 

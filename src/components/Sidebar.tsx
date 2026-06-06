@@ -17,9 +17,11 @@ import {
   LogOut,
   ChevronUp,
   UserPlus,
+  Pencil,
+  Check,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { getProfile, getLevelInfo, LEVELS } from '@/lib/store';
+import { getProfile, saveProfile, getLevelInfo, LEVELS } from '@/lib/store';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 
@@ -37,13 +39,20 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [profile, setProfile] = useState({ xp: 0, level: 1 });
+  const [profile, setProfile] = useState<any>({ xp: 0, level: 1, name: 'Farid', title: 'Entrepreneur' });
   const [user, setUser] = useState<any>(null);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  
+  // Edit mode state
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editName, setEditName] = useState('Farid');
+  const [editTitle, setEditTitle] = useState('Entrepreneur');
 
   useEffect(() => {
     const p = getProfile();
-    setProfile({ xp: p.xp, level: p.level });
+    setProfile(p);
+    setEditName(p.name || 'Farid');
+    setEditTitle(p.title || 'Entrepreneur');
     
     // Auth check
     if (pathname !== '/login') {
@@ -56,6 +65,13 @@ export default function Sidebar() {
       });
     }
   }, [pathname, router]);
+
+  const handleSaveName = () => {
+    const newProfile = { ...profile, name: editName, title: editTitle };
+    saveProfile(newProfile);
+    setProfile(newProfile);
+    setIsEditingName(false);
+  };
 
   const levelInfo = getLevelInfo(profile.xp);
 
@@ -87,7 +103,7 @@ export default function Sidebar() {
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 glass px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img src="/logo.png" alt="Logo" className="w-8 h-8 rounded-lg shadow-md object-cover" />
-          <span className="font-bold text-lg text-gradient">Farid</span>
+          <span className="font-bold text-lg text-gradient">{profile.name || 'Farid'}</span>
         </div>
         <button
           onClick={() => setOpen(!open)}
@@ -115,12 +131,48 @@ export default function Sidebar() {
         }`}
       >
         {/* Logo */}
-        <div className="px-6 mb-8">
+        <div className="px-6 mb-8 group relative">
           <div className="flex items-center gap-3 mb-1">
-            <img src="/logo.png" alt="Farid Entrepreneur Logo" className="w-10 h-10 rounded-xl shadow-lg object-cover" />
-            <div>
-              <h1 className="font-bold text-lg text-white leading-tight">Farid</h1>
-              <p className="text-[10px] text-text-secondary tracking-wider uppercase">Entrepreneur</p>
+            <img src="/logo.png" alt="Logo" className="w-10 h-10 rounded-xl shadow-lg object-cover" />
+            <div className="flex-1">
+              {isEditingName ? (
+                <div className="flex flex-col gap-1">
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="bg-surface-hover/50 text-white text-sm font-bold rounded px-2 py-1 border border-border focus:border-primary outline-none w-full"
+                    placeholder="Name"
+                    autoFocus
+                  />
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={editTitle}
+                      onChange={(e) => setEditTitle(e.target.value)}
+                      className="bg-surface-hover/50 text-text-secondary text-[10px] uppercase tracking-wider rounded px-2 py-1 border border-border focus:border-primary outline-none flex-1"
+                      placeholder="Title"
+                    />
+                    <button onClick={handleSaveName} className="p-1 rounded bg-primary/20 text-primary hover:bg-primary/40 transition-colors">
+                      <Check size={14} />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <div>
+                    <h1 className="font-bold text-lg text-white leading-tight">{profile.name || 'Farid'}</h1>
+                    <p className="text-[10px] text-text-secondary tracking-wider uppercase">{profile.title || 'Entrepreneur'}</p>
+                  </div>
+                  <button 
+                    onClick={() => setIsEditingName(true)}
+                    className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-text-muted hover:text-white hover:bg-white/10 transition-all ml-auto"
+                    title="Edit Name"
+                  >
+                    <Pencil size={14} />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
