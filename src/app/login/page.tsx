@@ -41,7 +41,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0f172a] px-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#061021] px-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
