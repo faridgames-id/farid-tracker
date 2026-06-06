@@ -26,6 +26,7 @@ export default function DashboardPage() {
     monthlyIncome: 0,
     learningCount: 0,
     gymDays: 0,
+    name: 'Farid',
   });
 
   useEffect(() => {
@@ -55,6 +56,7 @@ export default function DashboardPage() {
       monthlyIncome: monthlyIncome,
       learningCount: learning.length,
       gymDays,
+      name: profile.name || 'Farid',
     });
   }, []);
 
@@ -74,7 +76,7 @@ export default function DashboardPage() {
           <div className="relative z-10">
             <p className="text-text-secondary text-sm mb-1">{greeting} 👋</p>
             <h1 className="text-3xl lg:text-4xl font-bold mb-2">
-              Welcome Back, <span className="text-gradient">Farid</span>
+              Welcome Back, <span className="text-gradient">{stats.name}</span>
             </h1>
             <p className="text-text-muted text-sm max-w-lg">
               Track Your Habits. Grow Your Income. Build Your Future.
