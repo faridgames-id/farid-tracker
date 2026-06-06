@@ -11,14 +11,15 @@ import {
   getTransactions,
   getLearningEntries,
   getWorkoutsForWeek,
-  getWeekKey,
+  getMonthKey,
   formatCurrency,
   LEVELS,
 } from '@/lib/store';
-import { Flame, TrendingUp, TrendingDown, BookOpen, Dumbbell, Trophy, Target, Zap, Star, DollarSign } from 'lucide-react';
+import { Flame, TrendingUp, TrendingDown, BookOpen, Dumbbell, Trophy, Target, Zap, Star, DollarSign, ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 
 export default function DashboardPage() {
   const [mounted, setMounted] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(getToday());
   const [stats, setStats] = useState({
     streak: 0,
     xp: 0,
@@ -30,18 +31,24 @@ export default function DashboardPage() {
     name: 'Farid',
   });
 
+  const changeDate = (offset: number) => {
+    const d = new Date(selectedDate + 'T12:00:00Z');
+    d.setDate(d.getDate() + offset);
+    setSelectedDate(d.toISOString().slice(0, 10));
+  };
+
   useEffect(() => {
     setMounted(true);
     const profile = getProfile();
-    const today = getToday();
-    const habits = getHabitsForDate(today);
+    const habits = getHabitsForDate(selectedDate);
     const allItems = [...habits.morning, ...habits.afternoon, ...habits.night];
     const completed = allItems.filter(h => h.completed).length;
     const percent = allItems.length > 0 ? Math.round((completed / allItems.length) * 100) : 0;
 
     const transactions = getTransactions();
-    const now = new Date();
-    const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    const d = new Date(selectedDate + 'T12:00:00Z');
+    const monthKey = getMonthKey(d);
+    
     const monthlyIncome = transactions
       .filter(t => t.type === 'income' && t.date.startsWith(monthKey))
       .reduce((sum, t) => sum + t.amount, 0);
@@ -51,7 +58,7 @@ export default function DashboardPage() {
       .reduce((sum, t) => sum + t.amount, 0);
 
     const learning = getLearningEntries();
-    const workouts = getWorkoutsForWeek(getWeekKey());
+    const workouts = getWorkoutsForWeek(getWeekKey(d));
     const gymDays = workouts.filter(w => w.completed).length;
 
     setStats({
@@ -64,7 +71,7 @@ export default function DashboardPage() {
       gymDays,
       name: profile.name || 'Farid',
     });
-  }, []);
+  }, [selectedDate]);
 
   if (!mounted) return <DashboardSkeleton />;
 
@@ -79,14 +86,57 @@ export default function DashboardPage() {
         <div className="glass rounded-3xl p-8 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-gold/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+          
+          <div className="absolute top-6 right-6 z-20 hidden sm:block">
+            <div className="flex items-center gap-1 bg-white/5 backdrop-blur-md rounded-lg p-1 border border-white/10">
+              <button onClick={() => changeDate(-1)} className="p-1.5 hover:bg-white/10 rounded-md text-text-muted hover:text-white transition-colors">
+                <ChevronLeft size={16} />
+              </button>
+              <div className="relative flex items-center group px-2">
+                <Calendar size={14} className="text-primary absolute left-2 pointer-events-none" />
+                <input 
+                  type="date" 
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="bg-transparent text-sm font-medium outline-none cursor-pointer hover:text-primary transition-colors text-white pl-6"
+                  style={{ colorScheme: 'dark' }}
+                />
+              </div>
+              <button onClick={() => changeDate(1)} className="p-1.5 hover:bg-white/10 rounded-md text-text-muted hover:text-white transition-colors">
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+
           <div className="relative z-10">
             <p className="text-text-secondary text-sm mb-1">{greeting} 👋</p>
             <h1 className="text-3xl lg:text-4xl font-bold mb-2">
               Welcome Back, <span className="text-gradient">{stats.name}</span>
             </h1>
-            <p className="text-text-muted text-sm max-w-lg">
+            <p className="text-text-muted text-sm max-w-lg mb-4 sm:mb-0">
               Track Your Habits. Grow Your Income. Build Your Future.
             </p>
+            
+            <div className="sm:hidden mt-4 mb-2">
+              <div className="flex items-center gap-1 bg-white/5 backdrop-blur-md rounded-lg p-1 w-fit border border-white/10">
+                <button onClick={() => changeDate(-1)} className="p-1.5 hover:bg-white/10 rounded-md text-text-muted hover:text-white transition-colors">
+                  <ChevronLeft size={16} />
+                </button>
+                <div className="relative flex items-center group px-2">
+                  <Calendar size={14} className="text-primary absolute left-2 pointer-events-none" />
+                  <input 
+                    type="date" 
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    className="bg-transparent text-sm font-medium outline-none cursor-pointer hover:text-primary transition-colors text-white pl-6"
+                    style={{ colorScheme: 'dark' }}
+                  />
+                </div>
+                <button onClick={() => changeDate(1)} className="p-1.5 hover:bg-white/10 rounded-md text-text-muted hover:text-white transition-colors">
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
 
             {/* Level Bar */}
             <div className="mt-6 flex items-center gap-4 flex-wrap">
