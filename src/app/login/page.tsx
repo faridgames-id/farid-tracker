@@ -12,11 +12,23 @@ export default function LoginPage() {
 
   useEffect(() => {
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        await loadFromSupabase();
-        router.push('/');
-      } else {
+      try {
+        // Force timeout after 5 seconds if Supabase hangs
+        const sessionPromise = supabase.auth.getSession();
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000));
+        
+        const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]) as any;
+        
+        if (session) {
+          await loadFromSupabase();
+          router.push('/');
+        } else {
+          setLoading(false);
+        }
+      } catch (e) {
+        console.error("Session check failed:", e);
+        // If it hangs or fails, clear local storage to fix corrupted sessions
+        localStorage.clear();
         setLoading(false);
       }
     };
