@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
   CheckSquare,
@@ -15,6 +15,8 @@ import {
   Menu,
   X,
   LogOut,
+  ChevronUp,
+  UserPlus,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { getProfile, getLevelInfo, LEVELS } from '@/lib/store';
@@ -37,6 +39,7 @@ export default function Sidebar() {
   const [open, setOpen] = useState(false);
   const [profile, setProfile] = useState({ xp: 0, level: 1 });
   const [user, setUser] = useState<any>(null);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
   useEffect(() => {
     const p = getProfile();
@@ -60,6 +63,20 @@ export default function Sidebar() {
     await supabase.auth.signOut();
     localStorage.clear(); // Clear local data on logout for safety
     router.push('/login');
+  };
+
+  const handleSwitchAccount = async () => {
+    await supabase.auth.signOut();
+    localStorage.clear();
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin,
+        queryParams: {
+          prompt: 'select_account',
+        },
+      },
+    });
   };
 
   if (pathname === '/login') return null;
@@ -160,8 +177,37 @@ export default function Sidebar() {
         </nav>
 
         {/* User Profile Footer */}
-        <div className="mt-auto px-4 pt-4 pb-6 border-t border-white/5">
-          <div className="p-2.5 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3">
+        <div className="mt-auto px-4 pt-4 pb-6 border-t border-white/5 relative">
+          <AnimatePresence>
+            {isProfileDropdownOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                className="absolute bottom-full left-4 right-4 mb-2 p-2 rounded-2xl glass border border-white/10 shadow-xl flex flex-col gap-1 z-50"
+              >
+                <button
+                  onClick={handleSwitchAccount}
+                  className="flex items-center gap-3 w-full p-2.5 rounded-xl text-sm font-medium text-text-secondary hover:text-white hover:bg-white/10 transition-colors"
+                >
+                  <UserPlus size={16} />
+                  Switch Account
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-3 w-full p-2.5 rounded-xl text-sm font-medium text-danger hover:bg-danger/10 transition-colors"
+                >
+                  <LogOut size={16} />
+                  Log Out
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div 
+            onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+            className="p-2.5 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3 cursor-pointer hover:bg-white/10 transition-colors"
+          >
             {user?.user_metadata?.avatar_url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={user.user_metadata.avatar_url} alt="Avatar" className="w-10 h-10 rounded-full" />
@@ -184,9 +230,9 @@ export default function Sidebar() {
                 <span className="text-[#00d4ff]">Google Account</span>
               </div>
             </div>
-            <button onClick={handleLogout} className="text-text-muted hover:text-danger p-1.5 rounded-lg transition-colors hover:bg-white/10" title="Logout">
-              <LogOut size={16} />
-            </button>
+            <div className="text-text-muted p-1">
+              <ChevronUp size={16} className={`transition-transform duration-200 ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
+            </div>
           </div>
         </div>
       </motion.aside>
