@@ -3,6 +3,7 @@ import './globals.css';
 import Sidebar from '@/components/Sidebar';
 
 import AnimatedBackground from '@/components/AnimatedBackground';
+import IntroOverlay from '@/components/IntroOverlay';
 
 export const metadata: Metadata = {
   title: 'Farid Entrepreneur | Track. Grow. Build.',
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
       </head>
       <body className="gradient-bg min-h-screen font-sans antialiased bg-[#061021]">
+        <IntroOverlay />
         <AnimatedBackground />
 
         <Sidebar />
