@@ -74,12 +74,14 @@ export default function IntroOverlay() {
                 <div className="flex-1 flex flex-col items-center justify-center w-full">
                     {/* Logo Premium Reveal */}
                     <div className="relative mb-10 group animate-[fade-in-up_1s_ease-out]">
-                        <div className="w-24 h-24 rounded-3xl bg-gradient-to-tr from-white/[0.05] to-white/[0.01] border border-white/[0.05] p-4 flex items-center justify-center shadow-[0_20px_40px_rgba(0,0,0,0.4)] backdrop-blur-sm relative overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.05] to-transparent translate-x-[-100%] animate-[shimmer_3s_infinite_linear]"></div>
+                        {/* We use padding 0 and place the border on the container. The image is forced to fill and the corners are clipped. */}
+                        <div className="w-24 h-24 rounded-[1.5rem] bg-gradient-to-tr from-white/[0.05] to-white/[0.01] border border-white/[0.1] shadow-[0_20px_40px_rgba(0,0,0,0.6)] backdrop-blur-sm relative overflow-hidden flex items-center justify-center p-1">
+                            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.1] to-transparent translate-x-[-100%] animate-[shimmer_3s_infinite_linear] z-10 pointer-events-none"></div>
+                            {/* Adding rounded-[1.2rem] directly to img to crop the black edges, using object-cover to ensure it fills */}
                             <img 
                                 src="/icon.png" 
                                 alt="Logo" 
-                                className="w-full h-full object-contain drop-shadow-lg"
+                                className="w-full h-full object-cover rounded-[1.3rem] shadow-inner"
                                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
                             />
                         </div>
